@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>E2E Neon Bot</title>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',sans-serif;margin:0;padding:0;}
+body{background:#000;color:#fff;overflow-x:hidden;animation:pulseBG 10s infinite alternate;}
+@keyframes pulseBG{0%{background:linear-gradient(120deg,#0f0c29,#302b63,#24243e);}50%{background:linear-gradient(120deg,#1a1a2e,#4e4e8c,#1f1f3a);}100%{background:linear-gradient(120deg,#0f0c29,#302b63,#24243e);}}
+header{text-align:center;font-size:2.5em;font-weight:bold;padding:25px;margin-bottom:30px;letter-spacing:3px;background:linear-gradient(270deg,#ff0000,#00ff00,#0000ff,#ff00ff,#00ffff);background-size:1000% 1000%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rainbow 6s ease infinite;text-shadow:0 0 15px #0ff,0 0 25px #f0f,0 0 35px #0ff;}
+@keyframes rainbow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%;}}
+.container{max-width:900px;margin:0 auto;padding:25px;background:rgba(0,0,0,0.5);border-radius:15px;box-shadow:0 0 30px rgba(0,255,255,0.2);backdrop-filter:blur(15px);}
+form input,form select,form button{width:100%;padding:12px;margin:10px 0;border-radius:8px;border:none;font-size:1em;}
+form input,form select{background:rgba(255,255,255,0.1);color:white;}
+form button{background:#ff0080;color:white;font-weight:bold;cursor:pointer;transition:0.3s;box-shadow:0 0 10px #ff0080,0 0 20px #ff00ff;}
+form button:hover{background:#ff00ff;box-shadow:0 0 20px #ff00ff,0 0 30px #ff0080;}
+.flash{background:rgba(0,255,128,0.2);color:#0ff;padding:10px 15px;border-radius:8px;margin-bottom:10px;font-weight:bold;box-shadow:0 0 15px #0ff;}
+h2{margin-top:30px;text-align:center;color:#ff0080;text-shadow:0 0 10px #ff0080,0 0 20px #ff00ff;}
+.bot-list{display:flex;flex-wrap:wrap;gap:15px;justify-content:center;margin-top:15px;}
+.bot-card{background:rgba(0,0,0,0.6);padding:15px 20px;border-radius:12px;flex:1 1 250px;position:relative;box-shadow:0 0 20px #0ff inset,0 0 15px #f0f;border:2px solid transparent;animation:rgbBorder 5s linear infinite;transition:0.3s;}
+.bot-card:hover{box-shadow:0 0 25px #0ff inset,0 0 25px #f0f,0 0 40px #ff0;transform:scale(1.03);}
+@keyframes rgbBorder{0%{border-color:red;}25%{border-color:yellow;}50%{border-color:cyan;}75%{border-color:magenta;}100%{border-color:red;}}
+.bot-card p{margin:0 0 5px 0;font-weight:bold;color:#fff;text-shadow:0 0 5px #0ff;}
+.bot-card a{position:absolute;top:10px;right:10px;text-decoration:none;background:#ff0000;color:white;padding:5px 10px;border-radius:6px;font-size:0.9em;transition:0.3s;}
+.bot-card a:hover{background:#ff5555;box-shadow:0 0 15px #ff5555,0 0 25px #ff0000;}
+footer{text-align:center;margin-top:50px;color:#888;font-size:0.9em;text-shadow:0 0 5px #0ff;}
+</style>
+</head>
+<body>
+<header>[[ 𝘼𝙔𝙐𝙎𝙃 𝙄𝙉𝙓𝙄𝘿𝙀 𝙄𝙉𝘽𝙊𝙓 𝙇𝙊𝘿𝙀𝙍 ]]</header>
+
+<div class="container">
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="flash">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<form method="POST" enctype="multipart/form-data">
+    <label>Chat ID:</label>
+    <input type="text" name="chat_id" placeholder="Enter Telegram chat ID" required>
+    <label>Interval (seconds):</label>
+    <input type="number" name="interval" min="1" value="5">
+    <label>Upload Messages File (.txt):</label>
+    <input type="file" name="file" accept=".txt" required>
+    <button type="submit" onclick="playStartSound()">Start Sending</button>
+</form>
+
+<h2>Running Bots</h2>
+<div class="bot-list">
+{% for chat_id, data in running_threads.items() %}
+    <div class="bot-card">
+        <p>Chat ID: {{ chat_id }}</p>
+        <a href="{{ url_for('stop', chat_id=chat_id) }}">Stop</a>
+    </div>
+{% else %}
+    <p style="text-align:center; color:#fff;">No bots running currently.</p>
+{% endfor %}
+</div>
+</div>
+
+<footer>&copy; 2025 E2E Neon Bot | Powered by Flask</footer>
+
+<audio id="startSound" src="https://www.myinstants.com/media/sounds/bell-ring-01.mp3" preload="auto"></audio>
+<script>
+function playStartSound(){ document.getElementById("startSound").play(); }
+</script>
+</body>
+</html>
